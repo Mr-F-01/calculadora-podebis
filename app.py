@@ -56,4 +56,15 @@ elif tabs == "Llenar datos manualmente":
 
     predial_percent = st.slider("% estimado de impuesto predial anual", min_value=4.5, max_value=5.0, value=4.5, step=0.1)
     ahorro_predial_anual = valor_tierra * (predial_percent / 100)
-    st.write(f"Ahorro estimado anual
+    st.write(f"Ahorro estimado anual por predial: ${ahorro_predial_anual:,.2f} USD")
+
+    if st.button("Calcular"):
+        isr = ingresos * coef * 0.30
+        iva = inversion * 0.45
+        total = isr + iva + ahorro_predial_anual
+        st.success("Resultados estimados:")
+        st.write(f"Crédito Fiscal ISR: ${isr:,.2f} USD")
+        st.write(f"Crédito Fiscal IVA: ${iva:,.2f} USD")
+        st.write(f"Ahorro por predial: ${ahorro_predial_anual:,.2f} USD")
+        st.write(f"**Total ahorro anual estimado: ${total:,.2f} USD**")
+
