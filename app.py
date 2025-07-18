@@ -61,10 +61,17 @@ elif tabs == "Llenar datos manualmente":
     if st.button("Calcular"):
         isr = ingresos * coef * 0.30
         iva = inversion * 0.45
-        total = isr + iva + ahorro_predial_anual
+        ahorro_anual = isr + iva + ahorro_predial_anual
+        ahorro_sexenal = ahorro_anual * 6
+        ahorro_8anios = ahorro_anual * 8
+
         st.success("Resultados estimados:")
         st.write(f"Crédito Fiscal ISR: ${isr:,.2f} USD")
         st.write(f"Crédito Fiscal IVA: ${iva:,.2f} USD")
         st.write(f"Ahorro por predial: ${ahorro_predial_anual:,.2f} USD")
-        st.write(f"**Total ahorro anual estimado: ${total:,.2f} USD**")
 
+        st.markdown("---")
+        st.subheader("Proyección de ahorro")
+        st.write(f"**Ahorro total anual estimado:** ${ahorro_anual:,.2f} USD")
+        st.write(f"**Proyección sexenal (6 años):** ${ahorro_sexenal:,.2f} USD")
+        st.write(f"**Proyección a 8 años:** ${ahorro_8anios:,.2f} USD")
