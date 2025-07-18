@@ -6,6 +6,7 @@ st.set_page_config(page_title="Calculadora PODEBIS", layout="centered")
 st.title("Calculadora Financiera – PODEBIS | Istmo de Tehuantepec")
 st.markdown("Simula tus beneficios fiscales por invertir en el corredor interoceánico")
 
+# Menú de selección
 tabs = st.radio("Selecciona una opción:", ["Subir declaración anual (PDF)", "Llenar datos manualmente"])
 
 if tabs == "Subir declaración anual (PDF)":
@@ -45,11 +46,14 @@ elif tabs == "Llenar datos manualmente":
     coef = st.selectbox("Coeficiente de utilidad", [0.20, 0.25, 0.30])
     inversion = st.number_input("Inversión en activo fijo (USD)", min_value=0, step=500000)
 
-    if st.button("Calcular"):
-        isr = ingresos * coef * 0.30
-        iva = inversion * 0.45
-        total = isr + iva
-        st.success("Resultados estimados:")
-        st.write(f"Crédito Fiscal ISR: ${isr:,.2f} USD")
-        st.write(f"Crédito Fiscal IVA: ${iva:,.2f} USD")
-        st.write(f"**Total ahorro anual estimado: ${total:,.2f} USD**")
+    st.markdown("---")
+    st.subheader("Información del terreno")
+    hectareas = st.number_input("Cantidad de hectáreas del proyecto", min_value=0.0, step=0.5)
+    precio_m2 = st.number_input("Precio del metro cuadrado (USD)", value=70.0, step=1.0)
+    valor_tierra = hectareas * 10000 * precio_m2
+
+    st.write(f"Valor estimado de la tierra: ${valor_tierra:,.2f} USD")
+
+    predial_percent = st.slider("% estimado de impuesto predial anual", min_value=4.5, max_value=5.0, value=4.5, step=0.1)
+    ahorro_predial_anual = valor_tierra * (predial_percent / 100)
+    st.write(f"Ahorro estimado anual
