@@ -1,11 +1,13 @@
 import streamlit as st
 import pdfplumber
+import pytesseract
+from PIL import Image
 import altair as alt
 import pandas as pd
 
-st.set_page_config(page_title="Calculadora PODEBIS", layout="centered")
+st.set_page_config(page_title="Calculadora Financiera – Parque Industrial Sureste", layout="centered")
 
-st.title("Calculadora Financiera – PODEBIS | Istmo de Tehuantepec")
+st.title("Calculadora Financiera – Parque Industrial Sureste")
 st.markdown("Simula tus beneficios fiscales por invertir en el corredor interoceánico")
 
 # Menú de selección
@@ -13,11 +15,19 @@ tabs = st.radio("Selecciona una opción:", ["Subir declaración anual (PDF)", "L
 
 if tabs == "Subir declaración anual (PDF)":
     pdf_file = st.file_uploader("Sube tu declaración anual en PDF", type="pdf")
+    texto = ""
     if pdf_file is not None:
-        with pdfplumber.open(pdf_file) as pdf:
-            texto = ""
-            for page in pdf.pages:
-                texto += page.extract_text()
+        try:
+            with pdfplumber.open(pdf_file) as pdf:
+                for page in pdf.pages:
+                    content = page.extract_text()
+                    if content:
+                        texto += content
+        except:
+            from pdf2image import convert_from_bytes
+            pages = convert_from_bytes(pdf_file.read())
+            for img in pages:
+                texto += pytesseract.image_to_string(img)
 
         ingresos = 0
         coef = 0
