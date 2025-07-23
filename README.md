@@ -1,4 +1,4 @@
-# Calculadora PODEBIS
+# Calculadora SURESTE
 
 Esta calculadora permite simular ahorros fiscales estimados para empresas interesadas en instalarse en el Corredor Interoceánico del Istmo de Tehuantepec (PODEBIS).
 
