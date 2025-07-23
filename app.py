@@ -123,3 +123,4 @@ elif tabs == "Llenar datos manualmente":
         ).properties(title='Proyección de ahorro total')
 
         st.altair_chart(chart, use_container_width=True)
+
