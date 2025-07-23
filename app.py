@@ -1,5 +1,7 @@
 import streamlit as st
 import pdfplumber
+import altair as alt
+import pandas as pd
 
 st.set_page_config(page_title="Calculadora PODEBIS", layout="centered")
 
@@ -58,6 +60,22 @@ elif tabs == "Llenar datos manualmente":
     ahorro_predial_anual = valor_tierra * (predial_percent / 100)
     st.write(f"Ahorro estimado anual por predial: ${ahorro_predial_anual:,.2f} USD")
 
+    st.markdown("---")
+    st.subheader("Estímulos estatales adicionales")
+    estimulos = {
+        "Uso de suelo (licencia)": st.checkbox("✓ Uso de suelo (licencia)"),
+        "Protección civil": st.checkbox("✓ Protección civil"),
+        "Vehículos usados": st.checkbox("✓ Vehículos usados"),
+        "Registro de propiedad": st.checkbox("✓ Registro de propiedad"),
+        "Dictamen ambiental": st.checkbox("✓ Dictamen ambiental")
+    }
+
+    ahorro_estatal = 0
+    for nombre, activo in estimulos.items():
+        if activo:
+            monto = st.number_input(f"Monto estimado por '{nombre}' (USD)", min_value=0, step=5000, key=nombre)
+            ahorro_estatal += monto
+
     if st.button("Calcular"):
         isr = ingresos * coef * 0.30
         iva = inversion * 0.45
@@ -65,13 +83,33 @@ elif tabs == "Llenar datos manualmente":
         ahorro_sexenal = ahorro_anual * 6
         ahorro_8anios = ahorro_anual * 8
 
+        total_estatal_sexenal = ahorro_estatal * 6
+        total_estatal_8anios = ahorro_estatal * 8
+
+        ahorro_total_sexenal = ahorro_sexenal + total_estatal_sexenal
+        ahorro_total_8anios = ahorro_8anios + total_estatal_8anios
+
         st.success("Resultados estimados:")
         st.write(f"Crédito Fiscal ISR: ${isr:,.2f} USD")
         st.write(f"Crédito Fiscal IVA: ${iva:,.2f} USD")
         st.write(f"Ahorro por predial: ${ahorro_predial_anual:,.2f} USD")
+        st.write(f"Ahorro estatal anual: ${ahorro_estatal:,.2f} USD")
 
         st.markdown("---")
         st.subheader("Proyección de ahorro")
-        st.write(f"**Ahorro total anual estimado:** ${ahorro_anual:,.2f} USD")
-        st.write(f"**Proyección sexenal (6 años):** ${ahorro_sexenal:,.2f} USD")
-        st.write(f"**Proyección a 8 años:** ${ahorro_8anios:,.2f} USD")
+        st.write(f"**Ahorro total anual estimado:** ${ahorro_anual + ahorro_estatal:,.2f} USD")
+        st.write(f"**Proyección sexenal (6 años):** ${ahorro_total_sexenal:,.2f} USD")
+        st.write(f"**Proyección a 8 años:** ${ahorro_total_8anios:,.2f} USD")
+
+        df = pd.DataFrame({
+            'Periodo': ['Anual', 'Sexenal', '8 años'],
+            'Ahorro estimado (USD)': [ahorro_anual + ahorro_estatal, ahorro_total_sexenal, ahorro_total_8anios]
+        })
+
+        chart = alt.Chart(df).mark_bar().encode(
+            x='Periodo',
+            y='Ahorro estimado (USD)',
+            tooltip=['Periodo', 'Ahorro estimado (USD)']
+        ).properties(title='Proyección de ahorro total')
+
+        st.altair_chart(chart, use_container_width=True)
