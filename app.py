@@ -1,6 +1,5 @@
 import streamlit as st
 import pdfplumber
-import pytesseract
 from PIL import Image
 import altair as alt
 import pandas as pd
@@ -24,10 +23,7 @@ if tabs == "Subir declaración anual (PDF)":
                     if content:
                         texto += content
         except:
-            from pdf2image import convert_from_bytes
-            pages = convert_from_bytes(pdf_file.read())
-            for img in pages:
-                texto += pytesseract.image_to_string(img)
+            st.warning("No se pudo leer el PDF. Asegúrate de subir un archivo con texto o usa la opción manual.")
 
         ingresos = 0
         coef = 0
@@ -123,4 +119,3 @@ elif tabs == "Llenar datos manualmente":
         ).properties(title='Proyección de ahorro total')
 
         st.altair_chart(chart, use_container_width=True)
-
